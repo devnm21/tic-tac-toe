@@ -8,14 +8,15 @@
 - [x] Alternate marking
 - [x] Game state management
 - [x] Make multiplayer work locally with core game logic
-- [ ]
-- [ ]
-- [ ]
-- [ ]
-- [ ]
-- [ ]
-- [ ]
-- [ ]
+- [ ] Initial Node server and Creating Sessions
+- [ ] Game DB schema, and routes to create, join, and update
+- [ ] Creating games from a session
+- [ ] Initialize socket server to get realtime updates
+- [ ] Store user turn and block state in either redis or server memory
+- [ ] Get blocks state from server to react game state on every move
+- [ ] Change user turn on every move in the server memory
+- [ ] socket events when the game is over and draw
+- [ ] Add a theme!
 - [ ]
 
 
