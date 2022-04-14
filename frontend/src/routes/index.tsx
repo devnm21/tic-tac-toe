@@ -11,9 +11,9 @@ const App: React.FC = (): ReactElement => {
 	return (
 		<ChakraProvider>
 			<Router>
-				<Routes>
+				<Routes>[
 					<Route path='/' element={<Home />} />
-					<Route path='/newGame/:id' element={<Game />} />
+					<Route path='/game/:id' element={<Game />} />
 				</Routes>
 			</Router>
 		</ChakraProvider>
