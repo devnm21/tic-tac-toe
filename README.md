@@ -6,8 +6,8 @@
 - [x] Show Game interface
 - [x] Game interface with on click working
 - [x] Alternate marking
-- [ ] Game state management
-- [ ] Make multiplayer work locally with core game logic
+- [x] Game state management
+- [x] Make multiplayer work locally with core game logic
 - [ ]
 - [ ]
 - [ ]
