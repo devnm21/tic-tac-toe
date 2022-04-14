@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Flex, Heading, Stack, useColorModeValue} from '@chakra-ui/react';
 import {useParams} from 'react-router-dom';
 import GameBoard from 'components/GameBoard';
 
 const Game = () => {
 	const { id } = useParams<{id: string}>();
+	const [playerWon, setPlayerWon] = useState('');
 
 
 	return <>
@@ -16,10 +17,13 @@ const Game = () => {
 			}>
 			<Stack align={'center'} >
 				<Heading as={'h1'} >
-					Make your move!
-					{id}
+					{
+						playerWon ?
+							`${playerWon} Won!`
+							: 'Make your move!'
+					}
 				</Heading>
-				<GameBoard />
+				<GameBoard onWinning={player => setPlayerWon(player)} />
 			</Stack>
 		</Flex>
 
