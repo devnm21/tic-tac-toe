@@ -8,15 +8,20 @@ import {getInitialGameBoardState} from '../../utils';
 const GameBoard : React.FC = (): ReactElement => {
 
 	const [blocks, setBlocks] = useState(getInitialGameBoardState());
+	const [lastPlayedByMe, setLastPlayed] = useState(false);
+
+	const toggleLastPlayed = () => setLastPlayed(!lastPlayedByMe);
+
 	const onBlockClick = (id: any) => {
 		setBlocks({
 			...blocks,
 			[id]: {
 				markStyle: {
-					backgroundColor: 'brown'
+					backgroundColor: lastPlayedByMe ? 'brown': 'yellow',
 				},
 			}
 		});
+		toggleLastPlayed();
 	};
 	return  <>
 		<Grid
