@@ -1,7 +1,7 @@
 import { Schema, model , Document} from 'mongoose';
 
 // 1. Create an interface representing a document in MongoDB.
-interface IGame extends Document {
+export interface IGame extends Document {
     sessionId : string;
     joinedSessionId?: string;
     hasEnded?: boolean;
