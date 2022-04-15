@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Flex, Heading, Stack, useColorModeValue, Text, Spinner} from '@chakra-ui/react';
+import {Flex, Heading, Stack, useColorModeValue, Text, Spinner, Button} from '@chakra-ui/react';
 import {useParams} from 'react-router-dom';
+import io from 'socket.io-client';
 import GameBoard from 'components/GameBoard';
 import TopBar from 'views/game/topbar';
 import {joinGame, mySession} from '../../services/api';
@@ -13,6 +14,24 @@ const Game = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [serverError, setServerError] = useState('');
 	const [game, setGame] = useState('');
+
+	const [socket, setSocket] = useState<any>(null);
+
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	useEffect(() => {
+		const newSocket = io('http://localhost:3000',  {
+			reconnectionDelay: 1000,
+			reconnection: true,
+			transports: ['websocket'],
+			agent: false,
+			upgrade: false,
+			rejectUnauthorized: false
+		});
+		setSocket(newSocket);
+		return () => newSocket.close();
+	}, [setSocket]);
+
 
 
 	const user = useContext(UserContext);
@@ -58,6 +77,7 @@ const Game = () => {
 							: 'Make your move!'
 					}
 				</Heading>
+				<Button onClick={() => socket.emit('message', 'yo')}>Socket Test</Button>
 				<GameBoard onWinning={player => setPlayerWon(player)} />
 				</>
 				}

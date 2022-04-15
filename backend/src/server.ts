@@ -12,10 +12,14 @@ import logger from 'jet-logger';
 import { CustomError } from '@shared/errors';
 import session from 'express-session';
 import cors from 'cors';
-
-
+import gameSocket from './socket/game';
+import * as http from "http";
+import * as socketio from 'socket.io'
+// @ts-ignore
+import sharedSession from 'express-socket.io-session';
 // Constants
 const app = express();
+const server = http.createServer(app);
 
 
 /***********************************************************************************
@@ -25,10 +29,13 @@ const app = express();
 // Common middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(session({
+
+const expressSession = session({
     secret: process.env.COOKIE_SECRET || 'cookie secret 1234',
-}))
+})
+app.use(expressSession);
 app.use(cookieParser());
+
 app.use(cors({
     origin: ['http://localhost:3001'],
     credentials: true,
@@ -62,24 +69,21 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
 });
 
 
-/***********************************************************************************
- *                                  Front-end content
- **********************************************************************************/
 
-// Set views dir
-const viewsDir = path.join(__dirname, 'views');
-app.set('views', viewsDir);
-
-// Set static dir
-const staticDir = path.join(__dirname, 'public');
-app.use(express.static(staticDir));
-
-// Serve index.html file
-app.get('*', (_: Request, res: Response) => {
-    res.send('404');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-var-requires
+const io: socketio.Server = require('socket.io')(server,{
+    cors: {
+        origin: ['http://localhost:3001'],
+        methods: ['GET', 'POST'],
+        withCredentials: true,
+    }
 });
+gameSocket(io);
 
-
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call
+io.use(sharedSession(expressSession, {
+    autoSave: true,
+}))
 
 // Export here and start in a diff file (for testing).
-export default app;
+export default server;
