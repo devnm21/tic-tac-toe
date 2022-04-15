@@ -80,6 +80,9 @@
       ],
       "@routes/*": [
         "src/routes/*"
+      ],
+      "@controllers/*": [
+        "src/controllers/*"
       ]
     },
     "useUnknownInCatchVariables": false

@@ -10,6 +10,8 @@ import 'express-async-errors';
 import apiRouter from './routes/api';
 import logger from 'jet-logger';
 import { CustomError } from '@shared/errors';
+import session from 'express-session';
+import cors from 'cors';
 
 
 // Constants
@@ -23,7 +25,14 @@ const app = express();
 // Common middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(session({
+    secret: process.env.COOKIE_SECRET || 'cookie secret 1234',
+}))
 app.use(cookieParser());
+app.use(cors({
+    origin: ['http://localhost:3001'],
+    credentials: true,
+}));
 
 // Show routes called in console during development
 if (process.env.NODE_ENV === 'development') {
@@ -67,7 +76,7 @@ app.use(express.static(staticDir));
 
 // Serve index.html file
 app.get('*', (_: Request, res: Response) => {
-    res.sendFile('index.html', {root: viewsDir});
+    res.send('404');
 });
 
 
