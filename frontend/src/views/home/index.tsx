@@ -1,9 +1,16 @@
 import React from 'react';
 import {Button, Center, Flex, Heading, Stack, useColorModeValue} from '@chakra-ui/react';
 import {useNavigate} from 'react-router-dom';
+import {createGame} from '../../services/api';
 
 const Home = () => {
 	const navigate = useNavigate();
+
+	const handleCreateGame = async () => {
+		const { data } = await createGame();
+		navigate('/game/' + data._id);
+	};
+	
 	return <>
 		<Center>
 			<Flex
@@ -14,7 +21,7 @@ const Home = () => {
 				}>
 				<Stack align={'center'} >
 					<Heading padding={'10px'} as={'h4'} >Tick Tak Toe!</Heading>
-					<Button onClick={() => navigate('/game/123')} >Create and Start a Game</Button>
+					<Button onClick={handleCreateGame} >Create and Start a Game</Button>
 				</Stack>
 			</Flex>
 		</Center>
