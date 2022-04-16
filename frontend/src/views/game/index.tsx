@@ -7,6 +7,7 @@ import TopBar from 'views/game/topbar';
 import {joinGame, mySession} from '../../services/api';
 import UserContext from '../../context/user';
 import config from '../../configs';
+import JSConfetti from 'js-confetti';
 
 interface gameState {
 	_id: string;
@@ -23,6 +24,7 @@ const Game = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [serverError, setServerError] = useState('');
 	const [currentPlayerSessionId, setCurrentPlayerSessionId] = useState('');
+	const [audio] = useState(new Audio('https://client-public-content.s3.ap-south-1.amazonaws.com/aancoy2.mp3'));
 	const [game, setGame] = useState<gameState>({
 		_id: '',
 		sessionId: '',
@@ -35,6 +37,7 @@ const Game = () => {
 
 	const [socket, setSocket] = useState<any>(null);
 	const toast = useToast();
+
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
@@ -70,6 +73,7 @@ const Game = () => {
 		}
 	};
 
+
 	const handleWinning = (playerMarkType: string) => {
 		setPlayerWon(playerMarkType === 'naught' ? game?.sessionId: game?.joinedSessionId);
 		setGame(game => ({
@@ -77,6 +81,14 @@ const Game = () => {
 			isOver: true,
 		}));
 	};
+
+	useEffect(() => {
+		if (playerWon && user.sessionId && playerWon === user.sessionId) {
+			const jsConfetti = new JSConfetti();
+			// audio.play();
+			jsConfetti.addConfetti();
+		}
+	}, [playerWon]);
 
 	useEffect(() => {
 		if (socket && id) {
