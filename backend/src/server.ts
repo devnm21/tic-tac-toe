@@ -32,12 +32,14 @@ app.use(express.urlencoded({extended: true}));
 
 const expressSession = session({
     secret: process.env.COOKIE_SECRET || 'cookie secret 1234',
+    resave: true,
+    saveUninitialized: true,
 })
 app.use(expressSession);
 app.use(cookieParser());
 
 app.use(cors({
-    origin: ['http://localhost:3001'],
+    origin: [process.env.CLIENT_HOST || 'http://localhost:3001'],
     credentials: true,
 }));
 
@@ -73,7 +75,7 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-var-requires
 const io: socketio.Server = require('socket.io')(server,{
     cors: {
-        origin: ['http://localhost:3001'],
+        origin: [process.env.CLIENT_HOST || 'http://localhost:3001'],
         methods: ['GET', 'POST'],
         withCredentials: true,
     }
