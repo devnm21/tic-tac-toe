@@ -24,7 +24,8 @@ const Game = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [serverError, setServerError] = useState('');
 	const [currentPlayerSessionId, setCurrentPlayerSessionId] = useState('');
-	const [audio] = useState(new Audio('https://client-public-content.s3.ap-south-1.amazonaws.com/aancoy2.mp3'));
+	const [winingAudio] = useState(new Audio('https://client-public-content.s3.ap-south-1.amazonaws.com/aancoy2.mp3'));
+	const [moveAudio] = useState(new Audio('https://client-public-content.s3.ap-south-1.amazonaws.com/teleport-14639.mp3'));
 	const [game, setGame] = useState<gameState>({
 		_id: '',
 		sessionId: '',
@@ -85,18 +86,17 @@ const Game = () => {
 	useEffect(() => {
 		if (playerWon && user.sessionId && playerWon === user.sessionId) {
 			const jsConfetti = new JSConfetti();
-			audio.play();
+			winingAudio.play();
 			jsConfetti.addConfetti();
 		}
 	}, [playerWon]);
 
 	useEffect(() => {
+		moveAudio.play();
+	}, [currentPlayerSessionId]);
+	useEffect(() => {
 		if (socket && id) {
 			socket.on('player-joined-room', (joiningSessionId: string) => {
-				console.log({
-					joiningSessionId,
-					user: user.sessionId,
-				});
 				if (game.joinedSessionId === joiningSessionId)
 					toast({
 						position: 'top',
