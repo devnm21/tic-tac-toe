@@ -1,20 +1,32 @@
-import React, {ReactElement, useEffect, useState} from 'react';
+import React, {Dispatch, ReactElement, SetStateAction, useContext, useEffect, useState} from 'react';
 import Block from 'components/GameBoard/Block';
-import {Grid, GridItem } from '@chakra-ui/react';
+import {Grid, GridItem, Spinner, Text} from '@chakra-ui/react';
 import {getInitialGameBoardState} from '../../utils';
+import { Socket } from 'socket.io-client';
+import UserContext from '../../context/user';
+import BlockUi from 'react-block-ui';
 
 interface Props {
 	onWinning: (player: string) => void;
+	socket: Socket;
+	roomId: string;
+	isPlayerTurn: boolean;
+	setCurrentPlayerSessionId: Dispatch<SetStateAction<string>>;
+	turnType: string;
+	game: any;
+	setGame: any;
+	onDraw: () => void;
 }
 
-const GameBoard : React.FC<Props> = ({ onWinning }: Props): ReactElement => {
+const GameBoard : React.FC<Props> = ({ onWinning, socket, roomId, turnType, isPlayerTurn, setCurrentPlayerSessionId, game,  setGame, onDraw }: Props): ReactElement => {
 
 	const [blocks, setBlocks] = useState(getInitialGameBoardState());
 	const [lastPlayedByMe, setLastPlayed] = useState(true);
+	const user = useContext(UserContext);
 
 	const toggleLastPlayed = () => setLastPlayed(!lastPlayedByMe);
 
-	const getUserIfMarkingsAreSame = (_blocks: any[]) => {
+	const getUserIfMarkingsAreSame = (_blocks: any[]): string | null => {
 		const mType = _blocks[0].markType;
 		const isMarkedBySameUser = _blocks.every(block => block.markType === mType);
 		return isMarkedBySameUser ? mType : null;
@@ -37,6 +49,10 @@ const GameBoard : React.FC<Props> = ({ onWinning }: Props): ReactElement => {
 			|| getUserIfMarkingsAreSame([blocks[2], blocks[4], blocks[6]]);
 	};
 
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	const checkIfAllBlocksAreMarked = () => Object.values(blocks).every(block => block.markType);
+
 	const checkIfWon = () => {
 		return checkDiagonally() || checkVertically() || checkHorizontally();
 	};
@@ -44,17 +60,7 @@ const GameBoard : React.FC<Props> = ({ onWinning }: Props): ReactElement => {
 	const onBlockClick = (id: any) => {
 		if (blocks[id].markType)
 			return ;
-		const newBlocksState = {
-			...blocks,
-			[id]: {
-				markType: lastPlayedByMe ? 'p1' : 'p2',
-				markStyle: {
-					backgroundColor: lastPlayedByMe ? 'brown': 'yellow',
-				},
-			}
-		};
-		console.log(newBlocksState );
-		setBlocks(newBlocksState);
+		socket.emit('player-move', { move: { blockIndex: id, turnType}, playerSessionId: user.sessionId,  roomId });
 		toggleLastPlayed();
 	};
 
@@ -62,38 +68,71 @@ const GameBoard : React.FC<Props> = ({ onWinning }: Props): ReactElement => {
 		const winningPlayer = checkIfWon();
 		if (winningPlayer)
 			onWinning(winningPlayer);
+		if (!winningPlayer && checkIfAllBlocksAreMarked())
+			onDraw();
 	}, [blocks]);
 
-	return  <>
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	useEffect(() => {
+		socket.emit('get-game-moves', roomId);
+		socket.on('player-move', (data: any) => {
 
-		<Grid
-			templateColumns='repeat(3, 1fr)'
-			gap={1}
-			alignContent={'space-around'}
+			setCurrentPlayerSessionId(data.playerSessionId === game.sessionId ? game.joinedSessionId : game.sessionId);
+			setBlocks((blocs: any) => ({
+				...blocs,
+				[Number(data.blockIndex)]: {
+					markType: data.turnType,
+				}
+			}));
+		});
+
+		socket.on('game-join', (data: any) => {
+			setBlocks((blocs: any) => ({
+				...blocs,
+				...data.moves,
+			}));
+			if (data.joinedSessionId)
+				setGame((game: any) => ({
+					...game,
+					joinedSessionId: data.joinedSessionId,
+				}));
+			setCurrentPlayerSessionId(data.currentPlayerSessionId);
+		});
+
+		return () => {
+			socket.off('block-update');
+			socket.off('game-join');
+		};
+	}, []);
+
+	return  <>
+		<BlockUi
+			tag="div"
+			blocking={!isPlayerTurn || game.isOver || game.isDraw}
+			message={<Text fontSize={'3xl'} color={'black'} >{game.isOver ? 'GAME OVER' : 'Waiting for opponent\'s move'}</Text>}
+			loader={game.isOver ? <></> : <Spinner />}
 		>
-			{
-				Object.entries(blocks).map(
-					([key, block]) =>
-						<GridItem
-							key={key}
-							id={key}
-							colSpan={1}
-							bg='papayawhip'
-							as={'div'}
-							onClick={() => onBlockClick(key)}
-							style={{
-								// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-								// @ts-ignore
-								cursor: block?.markType ? 'not-allowed': 'pointer',
-							}}
-						>
-							{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-							{/*  @ts-ignore */}
-							<Block markStyle={block.markStyle} />
-						</GridItem>
-				)
-			}
-		</Grid>
+			<Grid
+				templateColumns='repeat(3, 1fr)'
+				gap={1}
+				alignContent={'space-around'}
+			>
+				{
+					Object.entries(blocks).map(
+						([key, block]) =>
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
+							<Block markType={block.markType}
+								   turnType={turnType}
+								   key={key}
+								   id={key}
+								   onClick={onBlockClick}
+							/>
+					)
+				}
+			</Grid>
+		</BlockUi>
 	</>;
 };
 

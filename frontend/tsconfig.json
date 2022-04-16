@@ -23,7 +23,8 @@
     "paths": {
       "components/*": ["./components/*"],
       "routes/*": ["./routes/*"],
-      "views/*": ["./views/*"]
+      "views/*": ["./views/*"],
+      "assets/*": ["./assets/*"]
     }
   },
   "include": [

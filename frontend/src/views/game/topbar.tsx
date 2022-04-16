@@ -4,9 +4,10 @@ import {Button, HStack, useToast, Text} from '@chakra-ui/react';
 interface Props {
 	gameId: string | undefined;
 	isCreatedByCurrentPlayer: boolean;
+	showCopyButton: boolean;
 }
 
-const TopBar : React.FC<Props> = ({ gameId, isCreatedByCurrentPlayer }): ReactElement => {
+const TopBar : React.FC<Props> = ({ gameId, isCreatedByCurrentPlayer, showCopyButton }): ReactElement => {
 
 	const toast = useToast();
 	// useEffect(() => {
@@ -23,7 +24,7 @@ const TopBar : React.FC<Props> = ({ gameId, isCreatedByCurrentPlayer }): ReactEl
 	return  <>
 		<HStack justifyContent={'space-between'} padding={'25px'} backgroundColor={'dimgrey'}  >
 			<Text color={'white'} fontSize={'2xl'}> Game Id: {gameId}</Text>
-			{isCreatedByCurrentPlayer && <Button onClick={copyGameLinkToTextboard} >Click to copy the game joining link</Button>}
+			{isCreatedByCurrentPlayer && showCopyButton && <Button onClick={copyGameLinkToTextboard} >Click to copy the game joining link</Button>}
 		</HStack>
 	</>;
 };
