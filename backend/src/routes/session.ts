@@ -6,9 +6,6 @@ const router = Router();
 const { OK } = StatusCodes;
 
 router.get('/me', (req: Request, res: Response) => {
-   logger.info({
-      sessionId: req.session.id,
-   })
    res.status(OK).send({ sessionId: req.session.id });
 });
 

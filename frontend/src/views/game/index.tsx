@@ -120,7 +120,6 @@ const Game = () => {
 				{id && !isLoading && !serverError &&
 					<>
 						<Heading as={'h1'}>
-							{JSON.stringify({currentPlayerSessionId, user})}
 							{
 						 playerWon ?
 									`${playerWon === user.sessionId ? 'You': 'Opponent'} Won!`

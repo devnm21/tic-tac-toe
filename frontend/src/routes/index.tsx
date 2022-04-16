@@ -11,11 +11,23 @@ import UserContext from '../context/user';
 import { mySession } from '../services/api';
 
 const App: React.FC = (): ReactElement => {
-	const [userState, setUserState] = useState({ sessionId: null });
+	const [userState, setUserState] = useState({ sessionId: '' });
 
 	useEffect(() => {
-		mySession()
-			.then(({ data }) => setUserState(data));
+		const sessionId = localStorage.getItem('sessionId');
+		if (!sessionId || sessionId === 'null') {
+			mySession()
+				.then(({ data }) => {
+					localStorage.setItem('sessionId', data.sessionId);
+					setUserState(data);
+				});
+		}
+		else {
+			setUserState({
+				sessionId,
+			});
+		}
+
 	}, []);
 
 	return (

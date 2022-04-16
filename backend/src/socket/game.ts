@@ -23,9 +23,11 @@ const roomToGameState : Dic = {};
 class Connection {
      io: Server;
      socket: Socket;
+     sessionId?: string;
     constructor(io: Server, socket: Socket) {
         this.socket = socket;
         this.io = io;
+        this.sessionId = socket.handshake.headers.authorization?.replace('Session ', '');
 
         // Socket event that listens to new player requests to get the game moves
         socket.on('get-game-moves', (room: string) => this.emitGameMovesToSocketsInRoom(room))
@@ -45,7 +47,7 @@ class Connection {
         this.socket.join(room)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this.io.to(room).emit('player-joined-room', this.socket.handshake?.session?.id)
+        this.io.to(room).emit('player-joined-room', this.sessionId)
         this.io.to(room).emit('game-join', roomToGameState[room] || {})
     }
 
