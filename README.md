@@ -12,12 +12,11 @@
 - [x] Game DB schema, and routes to create, join, and update
 - [x] Creating games from a session
 - [x] Ability for only one person to join a game (and only first joined person can join again)
-- [ ] Initialize socket server to get realtime updates
-- [ ] Store user turn and block state in either redis or server memory
-- [ ] Get blocks state from server to react game state on every move
-- [ ] Change user turn on every move in the server memory
-- [ ] socket events when the game is over and draw
-- [ ] Add a theme!
-- [ ]
+- [x] Initialize socket server to get realtime updates
+- [x] Store user turn and block state in either redis or server memory
+- [x] Get blocks state from server to react game state on every move
+- [x] Change user turn on every move in the server memory
+- [x] socket events when the game is over and draw
+
 
 
