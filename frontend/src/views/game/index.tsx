@@ -6,6 +6,7 @@ import GameBoard from 'components/GameBoard';
 import TopBar from 'views/game/topbar';
 import {joinGame, mySession} from '../../services/api';
 import UserContext from '../../context/user';
+import config from '../../configs';
 
 interface gameState {
 	_id: string;
@@ -38,7 +39,7 @@ const Game = () => {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	useEffect(() => {
-		const newSocket = io('http://localhost:3000',  {
+		const newSocket = io(config.API,  {
 			reconnectionDelay: 1000,
 			reconnection: true,
 			transports: ['websocket'],
