@@ -85,7 +85,7 @@ const Game = () => {
 	useEffect(() => {
 		if (playerWon && user.sessionId && playerWon === user.sessionId) {
 			const jsConfetti = new JSConfetti();
-			// audio.play();
+			audio.play();
 			jsConfetti.addConfetti();
 		}
 	}, [playerWon]);
