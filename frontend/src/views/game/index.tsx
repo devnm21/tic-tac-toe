@@ -42,7 +42,7 @@ const Game = () => {
 		const newSocket = io(config.WS_API,  {
 			reconnectionDelay: 1000,
 			reconnection: true,
-			transports: ['websocket'],
+			transports: ['polling'],
 			agent: false,
 			upgrade: false,
 			rejectUnauthorized: false
