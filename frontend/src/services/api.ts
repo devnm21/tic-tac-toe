@@ -2,7 +2,6 @@ import axios from 'axios';
 import config from '../configs';
 const apiInstance = () => axios.create({
 	baseURL: config.API,
-	withCredentials: true,
 	headers: {
 		'authorization': `Session ${window?.localStorage?.sessionId}`
 	}

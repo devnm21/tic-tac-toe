@@ -15,8 +15,6 @@ import cors from 'cors';
 import gameSocket from './socket/game';
 import * as http from "http";
 import * as socketio from 'socket.io'
-// @ts-ignore
-import sharedSession from 'express-socket.io-session';
 // Constants
 const app = express();
 const server = http.createServer(app);
@@ -30,17 +28,11 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const expressSession = session({
-    secret: process.env.COOKIE_SECRET || 'cookie secret 1234',
-    resave: true,
-    saveUninitialized: true,
-})
-app.use(expressSession);
+
 app.use(cookieParser());
 
 app.use(cors({
-    origin: [process.env.CLIENT_HOST || 'http://localhost:3001'],
-    credentials: true,
+    origin: '*',
 }));
 
 // Show routes called in console during development
@@ -57,6 +49,7 @@ if (process.env.NODE_ENV === 'production') {
 /***********************************************************************************
  *                         API routes and error handling
  **********************************************************************************/
+
 
 // Add api router
 app.use('/api', apiRouter);
@@ -75,17 +68,13 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-var-requires
 const io: socketio.Server = require('socket.io')(server,{
     cors: {
-        origin: [process.env.CLIENT_HOST || 'http://localhost:3001'],
+        origin: '*',
         methods: ['GET', 'POST'],
-        withCredentials: true,
     }
 });
 gameSocket(io);
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call
-io.use(sharedSession(expressSession, {
-    autoSave: true,
-}))
+
 
 // Export here and start in a diff file (for testing).
 export default server;

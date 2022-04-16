@@ -28,7 +28,7 @@ router.patch('/:id/join',sessionCheck, async (req: Request, res: Response) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-argument
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        logger.info(req.params.id + '  hi ' +  req.session.id + ' dd ' + req["persistentSessionId"])
+        logger.info(req.params.id + ' dd ' + req["persistentSessionId"])
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-argument
