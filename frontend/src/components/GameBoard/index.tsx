@@ -88,6 +88,7 @@ const GameBoard : React.FC<Props> = ({ onWinning, socket, roomId, turnType, isPl
 		});
 
 		socket.on('game-join', (data: any) => {
+			console.log({ data });
 			setBlocks((blocs: any) => ({
 				...blocs,
 				...data.moves,
