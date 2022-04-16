@@ -46,6 +46,7 @@ class Connection {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         this.io.to(room).emit('player-joined-room', this.socket.handshake?.session?.id)
+        this.io.to(room).emit('game-join', roomToGameState[room] || {})
     }
 
     handlePlayerMove(data: any) {
