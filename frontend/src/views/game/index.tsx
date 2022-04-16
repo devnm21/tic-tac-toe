@@ -39,7 +39,7 @@ const Game = () => {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	useEffect(() => {
-		const newSocket = io(config.API,  {
+		const newSocket = io(config.WS_API,  {
 			reconnectionDelay: 1000,
 			reconnection: true,
 			transports: ['websocket'],
@@ -120,6 +120,7 @@ const Game = () => {
 				{id && !isLoading && !serverError &&
 					<>
 						<Heading as={'h1'}>
+							{JSON.stringify({currentPlayerSessionId, user})}
 							{
 						 playerWon ?
 									`${playerWon === user.sessionId ? 'You': 'Opponent'} Won!`
